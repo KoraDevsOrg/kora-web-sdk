@@ -1,31 +1,24 @@
 /**
- * KoraSyncEngine - Motor reutilizable de sincronización y persistencia
- * para micro-apps web conectadas a Kora Admin DB.
+ * KoraSyncEngine - Motor universal de sincronización Local-First
+ * Ecosistema KoraDevs
  */
 class KoraSyncEngine {
-  /**
-   * @param {Object} config
-   * @param {string} config.pkgName - Identificador del paquete (ej: 'org.koradevs.quiz.japon')
-   * @param {string} config.appName - Nombre legible de la app
-   * @param {string} config.tableDdl - Sentencia CREATE TABLE para SQLite
-   * @param {string} config.tableName - Nombre de la tabla a auditar
-   * @param {string} config.remoteUrl - URL del JSON en GitHub (raw)
-   * @param {string} config.htmlVersion - Versión actual del frontend web
-   * @param {Function} config.insertHandler - Función (db, item) para insertar registros
-   */
   constructor(config) {
-    this.config = config;
+    this.config = {
+      pkgName: config.pkgName,
+      appName: config.appName,
+      tableName: config.tableName,
+      tableDdl: config.tableDdl,
+      currentHtmlVersion: config.currentHtmlVersion || "1.0.0",
+      insertHandler: config.insertHandler
+    };
     this.hasBridge = typeof window.KoraDB !== "undefined";
-    this.storageKey = `kora_ver_${config.pkgName}`;
+    this.storageVerKey = `kora_ver_${config.pkgName}`;
   }
 
-  // 1. Inicialización de tabla en SQLite de Kora Admin DB
-  async initDb() {
-    if (!this.hasBridge) {
-      console.warn("[KoraSync] Modo standalone: window.KoraDB no detectado.");
-      return false;
-    }
-
+  // 1. Inicializa tabla en SQLite de Kora Admin DB
+  initDb() {
+    if (!this.hasBridge) return false;
     try {
       const resRaw = window.KoraDB.registerModule(
         this.config.pkgName,
@@ -33,15 +26,14 @@ class KoraSyncEngine {
         1,
         this.config.tableDdl
       );
-      const res = JSON.parse(resRaw);
-      return res.status === "SUCCESS";
+      return JSON.parse(resRaw).status === "SUCCESS";
     } catch (e) {
-      console.error("[KoraSync] Error al registrar módulo:", e);
+      console.warn("[KoraSync] Error al registrar módulo:", e);
       return false;
     }
   }
 
-  // 2. Conteo de registros locales
+  // 2. Consulta el conteo de filas en SQLite
   getLocalCount() {
     if (!this.hasBridge) return 0;
     try {
@@ -54,111 +46,84 @@ class KoraSyncEngine {
     }
   }
 
-  // 3. Flujo principal de verificación y sincronización resiliente
-  async sync(callbacks = {}) {
-    const onStatus = callbacks.onStatus || (() => {});
-    const onPrompt = callbacks.onPrompt || ((msg) => window.confirm(msg));
+  // 3. Orquestador de sincronización resiliente
+  async sync(incomingData = [], options = {}) {
+    const onStatus = options.onStatus || (() => {});
+    const onPrompt = options.onPrompt || ((msg) => window.confirm(msg));
 
     if (!this.hasBridge) {
-      onStatus("Modo navegador web (sin persistencia Kora Admin).");
-      return { status: "NO_BRIDGE" };
+      onStatus("Operando en navegador web (modo demostración).");
+      return { status: "NO_BRIDGE", data: incomingData };
     }
 
-    await this.initDb();
+    this.initDb();
     const localCount = this.getLocalCount();
+    const incomingCount = incomingData.length;
 
-    // Comportamiento Offline: Cero errores en pantalla, continuar con datos locales
+    // Escenario A: Modo Offline
     if (!navigator.onLine) {
-      onStatus("Modo Offline: Operando con la base de datos local.");
-      return { status: "OFFLINE", localCount };
+      onStatus("Modo sin conexión: Operando 100% con SQLite local.");
+      return { status: "OFFLINE", count: localCount };
     }
 
-    try {
-      // Consulta silenciosa a GitHub evitando caché de red
-      const response = await fetch(this.config.remoteUrl, { cache: "no-cache" });
-      if (!response.ok) {
-        onStatus("No se pudo contactar con Git. Usando datos locales.");
-        return { status: "NETWORK_ERROR", localCount };
-      }
-
-      const remoteData = await response.json();
-      const remoteItems = remoteData.items || remoteData.words || [];
-      const remoteCount = remoteItems.length;
-      const remoteHtmlVer = remoteData.htmlVersion || "1.0.0";
-      const localHtmlVer = localStorage.getItem(this.storageKey) || this.config.htmlVersion;
-
-      const hasMoreData = remoteCount > localCount;
-      const hasNewHtml = remoteHtmlVer !== localHtmlVer;
-
-      // Escenario A: Base de datos vacía (Primera carga) -> Sincronización automática
-      if (localCount === 0 && remoteCount > 0) {
-        onStatus("Descargando e inicializando base de datos local...");
-        this._persistBatch(remoteItems);
-        localStorage.setItem(this.storageKey, remoteHtmlVer);
-        onStatus("Base de datos inicializada.");
-        return { status: "INITIAL_SYNC_COMPLETE", count: remoteCount };
-      }
-
-      // Escenario B: Cambios detectados -> Solicitar autorización al usuario
-      if (hasMoreData || hasNewHtml) {
-        let mensaje = "Su base de datos está desactualizada. ¿Desea actualizar ahora?";
-        if (hasMoreData) {
-          mensaje = `Se encontraron ${remoteCount - localCount} nuevos registros en Git.\n${mensaje}`;
-        }
-
-        const userAccepted = await onPrompt(mensaje);
-
-        if (userAccepted) {
-          if (hasMoreData) {
-            onStatus("Sincronizando nuevos registros...");
-            this._persistBatch(remoteItems);
-          }
-          if (hasNewHtml) {
-            localStorage.setItem(this.storageKey, remoteHtmlVer);
-            onStatus("Recargando interfaz con nueva versión...");
-            window.location.reload();
-            return { status: "RELOADED" };
-          }
-          onStatus("Sincronización finalizada con éxito.");
-          return { status: "UPDATED", count: remoteCount };
-        } else {
-          onStatus("Actualización pospuesta por el usuario.");
-          return { status: "SKIPPED", localCount };
-        }
-      }
-
-      onStatus("Base de datos sincronizada.");
-      return { status: "UP_TO_DATE", localCount };
-    } catch (err) {
-      // Captura silenciosa ante fallos de conexión o parseo
-      console.warn("[KoraSync] Sincronización omitida:", err.message);
-      onStatus("Operando con base de datos local.");
-      return { status: "FALLBACK_LOCAL", localCount };
+    // Escenario B: BD vacía (Primera carga) -> Inicialización automática
+    if (localCount === 0 && incomingCount > 0) {
+      onStatus("Inicializando base de datos local...");
+      this._persistBatch(incomingData);
+      localStorage.setItem(this.storageVerKey, this.config.currentHtmlVersion);
+      onStatus(`Base de datos lista con ${incomingCount} registros.`);
+      return { status: "INITIAL_SYNC_COMPLETE", count: incomingCount };
     }
+
+    // Escenario C: Hay más registros o cambio de versión
+    const hasMoreRecords = incomingCount > localCount;
+    const lastSavedVer = localStorage.getItem(this.storageVerKey);
+    const hasNewVersion = lastSavedVer && lastSavedVer !== this.config.currentHtmlVersion;
+
+    if (hasMoreRecords || hasNewVersion) {
+      const diff = incomingCount - localCount;
+      const mensaje = diff > 0
+        ? `Su base de datos está desactualizada.\nSe encontraron ${diff} palabras nuevas en la versión actual.\n\n¿Desea sincronizar ahora?`
+        : `Nueva versión (${this.config.currentHtmlVersion}) disponible.\n\n¿Desea actualizar su base de datos ahora?`;
+
+      const userAccepted = await onPrompt(mensaje);
+
+      if (userAccepted) {
+        onStatus("Actualizando registros en SQLite...");
+        this._persistBatch(incomingData);
+        localStorage.setItem(this.storageVerKey, this.config.currentHtmlVersion);
+        onStatus("Base de datos actualizada con éxito.");
+        return { status: "UPDATED", count: incomingCount };
+      } else {
+        onStatus("Actualización pospuesta por el usuario.");
+        return { status: "SKIPPED", count: localCount };
+      }
+    }
+
+    onStatus("Base de datos al día.");
+    return { status: "UP_TO_DATE", count: localCount };
   }
 
-  // 4. Inserción por lotes delegando en el handler configurado
+  // 4. Inserción por lotes
   _persistBatch(items) {
-    if (!this.config.insertHandler) return;
+    if (!this.config.insertHandler || !this.hasBridge) return;
     items.forEach((item) => {
       this.config.insertHandler(window.KoraDB, item);
     });
   }
 
-  // 5. Utilidad para ejecutar consultas directas desde la app
-  query(sql, args = []) {
+  // 5. Consulta directa para obtener palabras desde SQLite
+  getAll() {
     if (!this.hasBridge) return [];
     try {
-      const res = window.KoraDB.query(sql, JSON.stringify(args));
-      return JSON.parse(res);
+      return JSON.parse(window.KoraDB.query(`SELECT * FROM ${this.config.tableName};`));
     } catch (e) {
-      console.error("[KoraSync] Error en query:", e);
+      console.error("[KoraSync] Error al leer tabla:", e);
       return [];
     }
   }
 }
 
-// Exportación modular o global para navegador
 if (typeof module !== "undefined" && module.exports) {
   module.exports = KoraSyncEngine;
 } else {
