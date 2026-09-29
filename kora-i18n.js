@@ -38,7 +38,25 @@ botanicaPrep: "Preparación y Dosificación Segura:",
 botanicaWarn: "Contraindicaciones:",
 botanicaAll: "Todas las Plantas",
 botanicaEmpty: "🌱 No se encontraron plantas para esta búsqueda.",
-botanicaFooter: "Kora Botanica • Software Libre MIT • Conocimiento Comunitario"
+botanicaFooter: "Kora Botanica • Software Libre MIT • Conocimiento Comunitario",
+    // En KORA_DICTIONARY.es:
+invTitle: "Kora Inventario & Recetas",
+invMenu: "Gestión de Inventario",
+invTabItems: "1. Insumos y Productos",
+invTabRecipes: "2. Recetas (Escandallo)",
+invBtnNewItem: "+ Nuevo Material / Producto",
+invBtnNewRecipe: "+ Nueva Receta de Lote",
+invThName: "Nombre",
+invThType: "Tipo",
+invThStock: "Stock",
+invThCost: "Costo / Venta",
+invRecipeBatchHelp: "Ingresa la cantidad total del lote (ej. 20 unidades) y el sistema calculará el consumo exacto para 1 unidad.",
+invBatchYield: "Rendimiento del Lote (Unidades):",
+invLaborDirect: "Mano de Obra del Lote ($):",
+invWasteMargin: "Merma Estimada (%):",
+invUnitCostCalculated: "Costo Unitario Resultante:",
+invFooter: "Kora Negocios Populares • Software Libre MIT • 100% Offline"
+    
     
   },
   guc: { // Wayuunaiki (Pueblo Wayuu)
@@ -67,7 +85,25 @@ botanicaPrep: "A'lakajawaa sümaa asawaa:",
 botanicaWarn: "Annoojolü cho'ujaain:",
 botanicaAll: "Supushuwa'a Wunu'u",
 botanicaEmpty: "🌱 Nnojoishi e'raajünüin wunu'u süpüla tü achechawaaka.",
-botanicaFooter: "Kora Botanica • Karalo'uta Anaasü MIT"
+botanicaFooter: "Kora Botanica • Karalo'uta Anaasü MIT",
+    // En KORA_DICTIONARY.guc (Wayuunaiki):
+invTitle: "Kora Kasa Ainjia & Ekawaa",
+invMenu: "Süchikuwaya Ainjia",
+invTabItems: "1. Kasa Ainjia",
+invTabRecipes: "2. Aküjia Ainjawaa",
+invBtnNewItem: "+ Kasa Jeketü",
+invBtnNewRecipe: "+ Aküjia Jeketü",
+invThName: "Nünülia",
+invThType: "Kasain",
+invThStock: "Kasa Eeka",
+invThCost: "Nneerü",
+invRecipeBatchHelp: "Paashajeera kasa ainjünaka (20 empanada) otta chi sistema nikirajee waneeshia kasa.",
+invBatchYield: "Supushuwa'a Ainjünaka:",
+invLaborDirect: "Nneerü süpüla a'yatawaa:",
+invWasteMargin: "Kasa amüliaaka (%):",
+invUnitCostCalculated: "Nneerü Waneeshia:",
+invFooter: "Kora Nneerü Anaasü • Karalo'uta MIT"
+    
     
   },
   pbb: { // Nasa Yuwe (Pueblo Nasa)
@@ -96,7 +132,24 @@ botanicaPrep: "Pi'sx yu'te ksa'j:",
 botanicaWarn: "Mee jxupxte thegme:",
 botanicaAll: "Tjuhnx Yu'tse",
 botanicaEmpty: "🌱 Mee yu'tse thegte ji'pme'.",
-botanicaFooter: "Kora Botanica • Fxize'we'sx MIT"
+botanicaFooter: "Kora Botanica • Fxize'we'sx MIT",
+    // En KORA_DICTIONARY.pbb (Nasa Yuwe):
+invTitle: "Kora Ksxaw Yu'tse & Pi'cna",
+invMenu: "Ksxawte'saty Theg",
+invTabItems: "1. Ksa'ji Insumos",
+invTabRecipes: "2. Dxij Pi'cna",
+invBtnNewItem: "+ Ksa'j Pi'cna Jxuk",
+invBtnNewRecipe: "+ Receta Jxuk",
+invThName: "Yase",
+invThType: "Thegni",
+invThStock: "Ksxawte e'ste",
+invThCost: "Thuu",
+invRecipeBatchHelp: "Dxij lote tucxte pa'ga (20 uwe'sx) sistema waneeshia uwe'sx thuu pkhbuyane.",
+invBatchYield: "Lote Ksxaw:",
+invLaborDirect: "Kuseyuj ksakwe thuu:",
+invWasteMargin: "Amüliaaka (%):",
+invUnitCostCalculated: "Waneeshia Thuu:",
+invFooter: "Kora Ksxaw Theg • Fxize'we'sx MIT"
   }
 });
 
