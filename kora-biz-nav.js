@@ -32,7 +32,10 @@ export class KoraBizNav {
 
     drawer.innerHTML = `
       <div class="drawer-header">
-        <h2 style="font-size: 1.15rem; font-weight: 800; color: #fff;">Ecosistema Kora</h2>
+        <div>
+          <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--accent-orange, #f97316); font-weight: 800; letter-spacing: 0.5px;">SUITE KORA</div>
+          <h2 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-top: 2px;">Módulos de Negocio</h2>
+        </div>
         <button id="btnCloseDrawer" class="btn-icon">✕</button>
       </div>
       
