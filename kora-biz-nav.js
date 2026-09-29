@@ -51,7 +51,7 @@ export class KoraBizNav {
       <div class="drawer-footer">
         <small style="color: var(--text-sub); display: block; margin-bottom: 8px;">Kora Admin DB (Motor Central)</small>
         <button id="btnOpenKoraAdmin" class="btn-secondary" style="width: 100%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
-          ⚙ Administrar Bases de Datos
+          ⚙️ Administrar Bases de Datos
         </button>
       </div>
     `;
