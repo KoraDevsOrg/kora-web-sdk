@@ -28,7 +28,18 @@ export const KORA_DICTIONARY = Object.freeze({
     catRcp: "Paro Cardiorrespiratorio (RCP)",
     catHemorragias: "Hemorragias y Torniquete",
     catQuemaduras: "Quemaduras Térmicas",
-    catToxicos: "Mordeduras y Tóxicos"
+    catToxicos: "Mordeduras y Tóxicos",
+    // En KORA_DICTIONARY.es:
+botanicaTitle: "Kora Plantas Medicinales",
+botanicaMenu: "Categorías",
+botanicaSearch: "Buscar por nombre, dolencia o síntoma...",
+botanicaCultivo: "Cultivo y Cosecha Casera:",
+botanicaPrep: "Preparación y Dosificación Segura:",
+botanicaWarn: "Contraindicaciones:",
+botanicaAll: "Todas las Plantas",
+botanicaEmpty: "🌱 No se encontraron plantas para esta búsqueda.",
+botanicaFooter: "Kora Botanica • Software Libre MIT • Conocimiento Comunitario"
+    
   },
   guc: { // Wayuunaiki (Pueblo Wayuu)
     appTitle: "Kora Ayatawaa Mülianüin",
@@ -46,7 +57,18 @@ export const KORA_DICTIONARY = Object.freeze({
     catRcp: "Aashajuushii (RCP)",
     catHemorragias: "Ashaa aashajawaa",
     catQuemaduras: "Kousaa süka siki",
-    catToxicos: "Wüi otta waneeyan"
+    catToxicos: "Wüi otta waneeyan",
+    // En KORA_DICTIONARY.guc (Wayuunaiki):
+botanicaTitle: "Kora Wunu'u Mülianüin",
+botanicaMenu: "Süchikuwaya",
+botanicaSearch: "Achechawaa wunu'u süpüla wanülüü...",
+botanicaCultivo: "Apünajaa sulu'u piichi:",
+botanicaPrep: "A'lakajawaa sümaa asawaa:",
+botanicaWarn: "Annoojolü cho'ujaain:",
+botanicaAll: "Supushuwa'a Wunu'u",
+botanicaEmpty: "🌱 Nnojoishi e'raajünüin wunu'u süpüla tü achechawaaka.",
+botanicaFooter: "Kora Botanica • Karalo'uta Anaasü MIT"
+    
   },
   pbb: { // Nasa Yuwe (Pueblo Nasa)
     appTitle: "Kora Dxij Yaacxpnasx",
@@ -64,7 +86,17 @@ export const KORA_DICTIONARY = Object.freeze({
     catRcp: "Yu'tse' Uypx (RCP)",
     catHemorragias: "Iskwe Ksa'ji",
     catQuemaduras: "Ip'jxupx",
-    catToxicos: "Ksxawte' thakwe"
+    catToxicos: "Ksxawte' thakwe",
+    // En KORA_DICTIONARY.pbb (Nasa Yuwe):
+botanicaTitle: "Kora Yu'tse Thegni",
+botanicaMenu: "Ksxawte'saty",
+botanicaSearch: "Thegni kse'te yu'tse jxukwe...",
+botanicaCultivo: "Ki'te thegni yaacxte:",
+botanicaPrep: "Pi'sx yu'te ksa'j:",
+botanicaWarn: "Mee jxupxte thegme:",
+botanicaAll: "Tjuhnx Yu'tse",
+botanicaEmpty: "🌱 Mee yu'tse thegte ji'pme'.",
+botanicaFooter: "Kora Botanica • Fxize'we'sx MIT"
   }
 });
 
