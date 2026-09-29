@@ -4,18 +4,31 @@
  */
 export const BIZ_MODULES = [
   { id: "inventario", name: "Gestión de Inventario", icon: "📦", url: "https://koradevsorg.github.io/kora-inventario/" },
-  { id: "fabricacion", name: "Fabricación & Órdenes", icon: "⚙️", url: "https://koradevsorg.github.io/kora-fabricacion/" },
+  { id: "fabricacion", name: "Fabricación (Órdenes)", icon: "⚙️", url: "https://koradevsorg.github.io/kora-fabricacion/" },
   { id: "ventas", name: "Ventas & Mostrador", icon: "🏷️", url: "https://koradevsorg.github.io/kora-ventas/" },
-  { id: "costos", name: "Costos & Servicios", icon: "💡", url: "https://koradevsorg.github.io/calculadora-costos/" },
-  { id: "rrhh", name: "Gestión Humana (RRHH)", icon: "👥", url: "https://koradevsorg.github.io/kora-rrhh/" },
+  { id: "costos", name: "Costos & Servicios Indirectos", icon: "💡", url: "https://koradevsorg.github.io/calculadora-costos/" },
+  { id: "rrhh", name: "Gestión Humana & Nómina", icon: "👥", url: "https://koradevsorg.github.io/kora-rrhh/" },
   { id: "financiero", name: "Financiero & Cuentas", icon: "📊", url: "https://koradevsorg.github.io/kora-financiero/" }
 ];
 
 export class KoraBizNav {
   static init(currentModuleId) {
-    const backdrop = document.getElementById("drawerBackdrop");
-    const drawer = document.getElementById("sideDrawer");
-    if (!drawer) return;
+    let backdrop = document.getElementById("drawerBackdrop");
+    let drawer = document.getElementById("sideDrawer");
+
+    if (!drawer) {
+      drawer = document.createElement("aside");
+      drawer.id = "sideDrawer";
+      drawer.className = "side-drawer";
+      document.body.prepend(drawer);
+    }
+
+    if (!backdrop) {
+      backdrop = document.createElement("div");
+      backdrop.id = "drawerBackdrop";
+      backdrop.className = "drawer-backdrop";
+      document.body.prepend(backdrop);
+    }
 
     drawer.innerHTML = `
       <div class="drawer-header">
@@ -23,13 +36,13 @@ export class KoraBizNav {
         <button id="btnCloseDrawer" class="btn-icon">✕</button>
       </div>
       
-      <div class="drawer-section-title">SUITE DE NEGOCIO</div>
+      <div class="drawer-section-title">SUITE DE NEGOCIO DESCENTRALIZADA</div>
       <nav class="drawer-list">
         ${BIZ_MODULES.map(m => {
           const isActive = m.id === currentModuleId;
           return `
             <a href="${isActive ? '#' : m.url}" class="drawer-item ${isActive ? 'active' : ''}">
-              <span>${m.icon}</span> <span>${m.name}</span>
+              <span class="drawer-item-icon">${m.icon}</span> <span>${m.name}</span>
             </a>
           `;
         }).join('')}
@@ -37,8 +50,8 @@ export class KoraBizNav {
 
       <div class="drawer-footer">
         <small style="color: var(--text-sub); display: block; margin-bottom: 8px;">Kora Admin DB (Motor Central)</small>
-        <button id="btnOpenKoraAdmin" class="btn-secondary" style="width: 100%; font-size: 0.8rem;">
-          ⚙️️ Administrar Bases de Datos
+        <button id="btnOpenKoraAdmin" class="btn-secondary" style="width: 100%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          ⚙ Administrar Bases de Datos
         </button>
       </div>
     `;
@@ -49,7 +62,7 @@ export class KoraBizNav {
 
     const toggle = (open) => {
       drawer.classList.toggle("open", open);
-      if (backdrop) backdrop.classList.toggle("active", open);
+      backdrop.classList.toggle("active", open);
     };
 
     if (btnOpen) btnOpen.onclick = () => toggle(true);
